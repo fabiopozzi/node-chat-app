@@ -7,9 +7,21 @@ const $messageFormButton = $messageForm.querySelector('button')
 
 // sendLocation button
 const $sendLocationButton = document.querySelector('#send-location')
+const $messages = document.querySelector('#messages')
+
+// Templates
+const messageTemplate = document.querySelector('#message-template').innerHTML
+const mapsTemplate = document.querySelector('#maps-template').innerHTML
 
 socket.on('message', (msg) => {
     console.log(msg);
+    const html = Mustache.render(messageTemplate, { message: msg })
+    $messages.insertAdjacentHTML('beforeend', html)
+})
+
+socket.on('locationMessage', (url) => {
+    const html = Mustache.render(mapsTemplate, { url })
+    $messages.insertAdjacentHTML('beforeend', html)
 })
 
 $messageForm.addEventListener('submit', (e) => {
