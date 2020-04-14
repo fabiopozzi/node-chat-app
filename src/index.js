@@ -14,7 +14,7 @@ const publicDirPath = path.join(__dirname, '../public')
 // setup static directory to use
 app.use(express.static(publicDirPath))
 
-const welcomeMsg = 'Welcome! Benvenuto coglione!'
+const welcomeMsg = 'Welcome! Benvenuto!'
 
 io.on('connection', (socket) => {
     console.log('New websocket connection');
@@ -26,9 +26,14 @@ io.on('connection', (socket) => {
         io.emit('message', msg)
     })
 
+    socket.on('sendLocation', (coords) => {
+        io.emit('message', `Location: ${coords.latitude}, ${coords.longitude}`)
+    })
+
     socket.on('disconnect', () => {
         io.emit('message', 'A user has left')
     })
+
 })
 
 server.listen(port, () => {
