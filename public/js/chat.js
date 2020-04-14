@@ -8,7 +8,9 @@ document.querySelector('#message-form').addEventListener('submit', (e) => {
     e.preventDefault();
 
     const msg = e.target.elements.message.value
-    socket.emit('sendMessage', msg);
+    socket.emit('sendMessage', msg, (message) => {
+        console.log('The message was delivered!', message)
+    });
 })
 
 document.querySelector('#send-location').addEventListener('click', () => {
