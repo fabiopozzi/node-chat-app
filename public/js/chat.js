@@ -15,12 +15,18 @@ const mapsTemplate = document.querySelector('#maps-template').innerHTML
 
 socket.on('message', (msg) => {
     console.log(msg);
-    const html = Mustache.render(messageTemplate, { message: msg })
+    const html = Mustache.render(messageTemplate, {
+        message: msg.text,
+        createdAt: moment(msg.createdAt).format('HH:mm')
+    })
     $messages.insertAdjacentHTML('beforeend', html)
 })
 
-socket.on('locationMessage', (url) => {
-    const html = Mustache.render(mapsTemplate, { url })
+socket.on('locationMessage', (message) => {
+    const html = Mustache.render(mapsTemplate, {
+        url: message.url,
+        createdAt: moment(message.createdAt).format('HH:mm')
+     })
     $messages.insertAdjacentHTML('beforeend', html)
 })
 
@@ -50,6 +56,7 @@ $sendLocationButton.addEventListener('click', () => {
     $sendLocationButton.setAttribute('disabled', 'disabled')
 
     navigator.geolocation.getCurrentPosition((position) => {
+    console.log(`latitudine ${position.coords.latitude}, longitudine ${position.coords.longitude}`)
         socket.emit('sendLocation', {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
@@ -57,5 +64,14 @@ $sendLocationButton.addEventListener('click', () => {
             $sendLocationButton.removeAttribute('disabled')
             console.log('Location shared!')
         })
-    })
+    }, (error) => {
+        console.log(error)
+        socket.emit('sendLocation', {
+            latitude: 45.45,
+            longitude: 8.616
+        }, () => {
+            $sendLocationButton.removeAttribute('disabled')
+            console.log('Location shared with default values!')
+        })
+    }, {timeout: 5000})
 })
