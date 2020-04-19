@@ -13,6 +13,9 @@ const $messages = document.querySelector('#messages')
 const messageTemplate = document.querySelector('#message-template').innerHTML
 const mapsTemplate = document.querySelector('#maps-template').innerHTML
 
+// Options
+const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
+
 socket.on('message', (msg) => {
     console.log(msg);
     const html = Mustache.render(messageTemplate, {
@@ -74,4 +77,11 @@ $sendLocationButton.addEventListener('click', () => {
             console.log('Location shared with default values!')
         })
     }, {timeout: 5000})
+})
+
+socket.emit('join', { username, room }, (error) => {
+    if (error) {
+        alert(error)
+        location.href = '/' // redirect to homepage
+    }
 })
